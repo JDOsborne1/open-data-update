@@ -42,3 +42,23 @@ clean_field <- function(field) str_match(field, '^"?([\\w-]+)"?')[, 2]
 price_paid <- price_paid %>%
   mutate_at(vars(property_type, estate_type, transaction_category, Record_status), clean_field) %>%
   mutate(date = as.POSIXct(date, origin = "1970-01-01"))
+
+#### House price index
+
+query <-
+  "
+  prefix lrppi: <http://landregistry.data.gov.uk/def/ppi/>
+  prefix lrcommon: <http://landregistry.data.gov.uk/def/common/>
+  prefix skos: <http://www.w3.org/2004/02/skos/core#>
+  prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+  prefix ukhpi: <http://landregistry.data.gov.uk/def/ukhpi/>
+  SELECT * 
+  WHERE {
+    ?region ukhpi:refRegion/rdfs:label ?name .
+    ?region ukhpi:refPeriodStart ?date .
+    ?region ukhpi:housePriceIndex ?hpi .
+    }
+"
+
+qd <- SPARQL(endpoint, query)
+hpi <- qd$results
