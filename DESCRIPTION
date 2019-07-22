@@ -1,12 +1,13 @@
 Package: streetVistaUpdateR
-Title: What the Package Does (One Line, Title Case)
+Title: Updates Street Vista
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Joseph",
+           family = "Osborne",
            role = c("aut", "cre"),
-           email = "first.last@example.com")
-Description: What the package does (one paragraph).
-License: What license it uses
+           email = "joseph.osborne@edit.co.uk")
+Description: Provides a clear interface layer to update the open data sources we use.
+        Currently focusing on the house prices and house pricing index for the postcodes in the UK.
+License: Apache License (>= 2.0)
 Encoding: UTF-8
 LazyData: true
