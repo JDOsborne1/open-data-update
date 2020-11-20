@@ -1,6 +1,6 @@
 #' Clean date fields
 #'
-#' @param field 
+#' @param field
 #'
 #' @return
 #' @export
@@ -9,9 +9,10 @@
 cleanFieldType <- function(field){
         output <- stringr::str_match(field, '^"?([\\w-]+)"?')[, 2]
         return(output)
-} 
+}
 
 cleanRegionName <- function(field){
         output <- stringr::str_match(field, '.*region/(\\S+)>$')[, 2]
         return(output)
         }
+        

@@ -9,9 +9,9 @@
 #'
 #' @examples
 getSales <- function(Limited = TRUE){
-                
+
         limiter_string <- if_else(Limited, "LIMIT 10", "")
-                
+
         query <- paste0(
                         "
                         prefix lrppi: <http://landregistry.data.gov.uk/def/ppi/>
@@ -45,11 +45,11 @@ getSales <- function(Limited = TRUE){
         )
 
         price_paid <- landRegistryQuery(query)
-        
+
         price_paid <- price_paid %>%
                 mutate_at(vars(property_type, estate_type, transaction_category, Record_status), cleanFieldType) %>%
                 mutate(date = as.POSIXct(date, origin = "1970-01-01"))
-        
+
         return(price_paid)
 }
 
@@ -61,9 +61,9 @@ getSales <- function(Limited = TRUE){
 #'
 #' @examples
 getHPI <- function(Limited = TRUE){
-        
-        limiter_string <- if_else(Limited, "LIMIT 10", "")
-        
+
+        limiter_string <- dplyr::if_else(Limited, "LIMIT 10", "")
+
         query <- paste0(
         '
         prefix lrppi: <http://landregistry.data.gov.uk/def/ppi/>
@@ -73,26 +73,26 @@ getHPI <- function(Limited = TRUE){
         prefix ukhpi: <http://landregistry.data.gov.uk/def/ukhpi/>
         prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 
-        SELECT ?region ?date ?hpi ?regionname 
+        SELECT ?region ?date ?hpi ?regionname
         {
                 ?region ukhpi:refPeriodStart ?date ;
                         ukhpi:housePriceIndex ?hpi ;
                         ukhpi:refRegion ?regionname
         FILTER (
-                ?date > "2019-04-01"^^xsd:date 
+                ?date > "2019-04-01"^^xsd:date
         )
         }
         '
         , limiter_string
         )
-        
-        
+
+
         hpi <- landRegistryQuery(query)
-        
+
         hpi <- hpi %>%
-                mutate(date = as.POSIXct(date, origin = "1970-01-01")) %>% 
-                mutate(regionname = cleanRegionName(regionname))
-        
+                dplyr::mutate(date = as.POSIXct(date, origin = "1970-01-01")) %>%
+                dplyr::mutate(regionname = cleanRegionName(regionname))
+
         return(hpi)
 }
 
@@ -100,4 +100,23 @@ landRegistryQuery <- function(Query, Endpoint = "http://landregistry.data.gov.uk
         returnedObj <- SPARQL::SPARQL(Endpoint, Query)
         output <- returnedObj$results
         return(output)
+}
+
+
+apiGetterWrapper <- function(.input_ds, .processor_endpoint){
+
+
+        # create example body
+        body <- list(
+           indat = toJSON(head(.input_ds))
+        )
+        # send POST Request to API
+        raw.result <- httr::POST(url = .processor_endpoint, query = body, encode = 'json')
+
+        # check status code
+        if (raw.result$status_code != 200){
+                stop(paste0("Unsuccessful Status code", raw.result$status_code))
+        }
+
+        jsonlite::fromJSON(rawToChar(raw.result$content))
 }
