@@ -84,3 +84,6 @@ raw.result$status_code
 .t_data <- fromJSON(rawToChar(raw.result$content))
 print(.t_data)
 apiGetterWrapper(head(.data, 30), "http://127.0.0.1:8000/testpipe")
+
+
+#Generate a wrapper which simply takes string form R code and evaluates it against supplied json data. as a cheap remote compute alternative.
